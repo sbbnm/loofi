@@ -1,13 +1,13 @@
-# Use an official Python runtime as a parent image
 FROM python:3.14-slim
 
-# Set working directory
 WORKDIR /code
 
-# Install system dependencies including curl and git
+# Install system dependencies including curl, git, unzip, and ca-certificates
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    unzip \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Bun runtime
@@ -20,8 +20,6 @@ COPY . /code/
 # Install python dependencies if requirements.txt exists
 RUN if [ -f requirements.txt ]; then pip install --no-cache-dir -r requirements.txt; fi
 
-# Expose port (Railway or default)
 EXPOSE 8000
 
-# Default command to run the application
 CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
